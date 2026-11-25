@@ -34,6 +34,12 @@ def run_command(command, fail_on_error=True):
 
 # ====================== TASKS : CODE ======================
 
+
+@task(name="Récupération du projet")
+def pull_project():
+    run_command(["git", "pull", "origin", "main"])
+
+
 @task(name="Installer les dépendances")
 def install_dependencies():
     run_command([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
@@ -67,6 +73,7 @@ def run_tests():
 
 # ====================== TASKS : DATA / MODÈLE ======================
 
+
 @task(name="Préparation des données", cache_policy=NO_CACHE)
 def prepare_data_task():
     return prepare_data()
@@ -99,6 +106,7 @@ def predict_task(model, client):
 
 # ====================== FLOWS ======================
 
+
 @flow(name="code", log_prints=True)
 def code_flow():
     format_code()
@@ -129,6 +137,7 @@ def predict_flow():
 
 @flow(name="all", log_prints=True)
 def all_flow():
+    pull_project()
     install_dependencies()
     format_code()
     check_quality()
